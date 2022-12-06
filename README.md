@@ -1,2 +1,2 @@
 # study2
-# ToDOlist 만들기
+ToDolist 만들기
