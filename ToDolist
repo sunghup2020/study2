@@ -11,19 +11,26 @@ import {
   ScrollView,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Fontisto, Icon } from "@expo/vector-icons";
-
+import { AntDesign } from '@expo/vector-icons';
+import BouncyCheckbox from "react-native-bouncy-checkbox";
+import { Entypo } from '@expo/vector-icons'; 
+import { NavigationContainer } from "@react-navigation/native";
 const STORAGE_KEY = "@toDos";
 
-export default function App() {
+export default function App({navigation}) {
+  
+const [todos, setTodos] = useState([]);
   const [working, setWorking] = useState(true);
   const [text, setText] = useState("");
   const [toDos, setToDos] = useState({});
+
+  const goTocalendars = () => navigation.navigate("calendars");
   useEffect(() => {
     loadToDos();
   }, []);
   const travel = () => setWorking(false);
   const work = () => setWorking(true);
+  const calendar = () => setWorking(true);
   const onChangeText = (payload) => setText(payload);
   
   const saveToDos = async (toSave) => {
@@ -50,10 +57,10 @@ export default function App() {
     setText("");
   };
   const deleteToDo = (key) => {
-    Alert.alert("Delete To Do", "Are you sure?", [
-      { text: "Cancel" },
+    Alert.alert("나의 메모 삭제", "지우시겠습니까?", [
+      { text: "아니오" },
       {
-        text: "I'm Sure",
+        text: "예",
         style: "destructive",
         onPress: () => {
           const newToDos = { ...toDos };
@@ -64,14 +71,23 @@ export default function App() {
       },
     ]);
   };
- 
+  const onToggle = id => e => {
+    setTodos(
+      todos.map(todo =>
+        todo.id === id ? {...todo, checked: !todo.checked} : todo,
+      ),
+    );
+  };
   //console.log(toDos);
   
   return (
+    
     <View style={styles.container}>
       <StatusBar style="auto" />
       <View style={styles.header}>
+        
       <TouchableOpacity onPress={work}>
+        
           <Text
             style={{ ...styles.btnText, color: working ? "white" : "grey" }}
           >
@@ -79,37 +95,70 @@ export default function App() {
           </Text>
 
         </TouchableOpacity>
+
+        <TouchableOpacity onpress={goTocalendars}>
+        <Text style={{
+              ...styles.btnText,
+              color: !working ? "white" : "grey",
+              color: !travel ? "white" : "grey",
+            }}>
+        calendar
+        </Text>
+        </TouchableOpacity>
+
         <TouchableOpacity onPress={travel}>
           <Text
             style={{
               ...styles.btnText,
               color: !working ? "white" : "grey",
             }}
+            
           >
             Travel
           </Text>
         </TouchableOpacity>
       </View>
+      <View style={{ width: 2000, height: 0.8, borderRadius:0, marginTop: 8, backgroundColor: 'tomato' }}></View>
       <TextInput
        onSubmitEditing={addToDo}
         onChangeText={onChangeText}
         returnKeyType="done"
         value={text}
         placeholder={
-          working ? "What do you have to do?" : "Where do you want to go?"
+          working ? "나의 할 일(17자이내로)" : "가고 싶은 여행지"
         }
         style={styles.input}
       />
-        <ScrollView>
+         
+        <ScrollView >
         {Object.keys(toDos).map((key) =>
           toDos[key].working === working ? (
-            <View style={styles.toDo} key={key}>
+            
+            <View style={styles.toDo} key={key}
+                
+            >
+                     <BouncyCheckbox
+              style={styles.checkbox}
+              size={28}
+              fillColor="blue"
+              unfillColor="#FFFFFF"
+              iconStyle={{ borderColor: "blue" }}
+              onPress={() => {}}
+              />
+
               <Text style={styles.toDoText}>{toDos[key].text}</Text>
-              <TouchableOpacity onPress={() => deleteToDo(key)}>
-       
-              <Text>❌</Text>
+           
+
+           
+              <TouchableOpacity  onPress={() => deleteToDo(key)}>
+              <AntDesign   name="delete"  size={25} color="black" />
               </TouchableOpacity>
+
+        
+              
+      
             </View>
+            
           ) : null
         )}
       </ScrollView>
@@ -121,8 +170,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#000',
-    paddingHorizontal: 20,
-   backgroundColor: "#282828"
+    paddingHorizontal: 1.1,
+   backgroundColor: "#282828",
+   
   },
   header: {
     justifyContent: "space-between",
@@ -139,23 +189,36 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     paddingHorizontal: 20,
     borderRadius: 30,
-    marginTop: 20,
+    marginTop: 30,
     fontSize: 18,
     marginVertical: 20,
   },
   toDo: {
     backgroundColor: "#3A3D40",
-    marginBottom: 10,
+    marginBottom: 20,
     paddingVertical: 20,
     paddingHorizontal: 20,
     borderRadius: 15,
      flexDirection: "row",
-    alignItems: "center",
+    alignItems: "flex-end",
     justifyContent: "space-between",
+    
   },
   toDoText: {
     color: "white",
     fontSize: 16,
     fontWeight: "500",
+    
   },
+  iconstyle:{
+    marginRight: 20,
+    color: "red",
+    
+  }
 });
+
+///<TouchableOpacity>
+   ///           <Entypo name="edit" size={25} color="white" />
+      ///        </TouchableOpacity>
+        
+       
